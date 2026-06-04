@@ -111,6 +111,11 @@ CLI 기반 프로그램
 결과 출력 및 저장
 
 ```
+
+---
+
+## 9. 코드 작성
+
 ```python
 import json
 import urllib.parse
