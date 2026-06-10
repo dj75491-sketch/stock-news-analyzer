@@ -250,31 +250,24 @@ def remove_html_tags(text):
 
 
 # 뉴스 제목+요약에서 키워드 탐색 및 점수 계산
-def analyze_news(title, summary):                # 함수로 만든 이유 : 뉴스마다 같은 분석을 반복해야 하기 떄문
-    text = title + " " + summary                 # 모든 뉴스에 대해 동일한 로직을 적용해야 하므로 함수로 분리함.
-    words = text.split()                         # title과 summary를 매개변수로 받은 이유:
-    found_plus = []                              # 뉴스마다 제목과 내용이 다르기 때문. 함수로 호출할 때마다 전달하여 재사용 가능.
-    found_minus = []
-    score = 0                                    # split() 사용 이유 : 문장을 단어 단위로 나누기 위해 사용함. 키워드 탐색을 위해
-                                                 # 리스트 사용 이유 : 발견된 키워드들을 저장하기 위해 사용.       
-    for word in words:                                           # for문 사용 이유 : 모든 단어를 하나씩 검사해야 하기 때문
-        if word in Plus_Keywords:                                # 빠른 키 검색을 위해 딕셔너리 사용함.
-            score = score + Plus_Keywords[word]                  # 제목과 요약을 합친 이유 : 제목에만 중요한 단어가 있을 수 있고 내용에만 있을 수 있음.
-            found_plus.append(word)
+def analyze_news(title, summary):        # 함수로 만든 이유 : 뉴스마다 같은 분석을 반복해야 하기 떄문.
+    text = title + " " + summary        # title과 summary : 뉴스마다 제목과 요약 내용이 다르기 때문.
+    words = text.split()        # title + summary : 제목이나 내용에만 주요 내용이 있을 수 있음.
+    score = 0                # split() 사용이유 : 문장을 단어 단위로 나누어 키워드에 탐색될 수 있도록 함.
+
+    for word in words:                # for문 사용 : 모든 단어를 하나씩 사용하기 위함.
+        word = clean_word(word)        # 문장부호같은 문자를 제외한 clean word를 호출함.
+        if word in Plus_Keywords:        # 딕셔너리 : 키워드마다 점수가 다르기 때문
+            score += Plus_Keywords[word]
 
         if word in Minus_Keywords:
-            score = score + Minus_Keywords[word]
-            found_minus.append(word)
+            score += Minus_Keywords[word]
 
-    return {                                    # 딕셔너리 반환 이유 : 분석 결과가 여러개이기 때문
-        "score": score,
-        "plus": found_plus,
-        "minus": found_minus,
-    }
+    return score
 
 
 # 종합 점수 기준에 따른 판단 문자열 반환
-def get_score(score):
+def get_score(score):        # 계산된 가중치를 점수로 변환
     if score >= 21:
         return "매우 긍정"
     elif score >= 6:
@@ -288,28 +281,24 @@ def get_score(score):
 
 
 # 뉴스 분석 결과 출력 및 총 점수 반환
-def print_news(news_list):
+def print_news(news_list):                # 뉴스를 하나씩 분석하고 전체 점수를 계산한다.
     total_score = 0
 
     print("\n[뉴스 분석 결과]")
 
-    for i in range(len(news_list)):
+    for i in range(len(news_list)):        # 함수 사용 : 뉴스마다 개수만큼 반복 분석해야 하기 때문
         title = news_list[i]["title"]
         summary = news_list[i]["summary"]
-        result = analyze_news(title, summary)
-        total_score = total_score + result["score"]
+        result = analyze_news(title, summary)        # 뉴스 하나의 점수를 계산하기 위함.
+        total_score += result
 
-        print("\n뉴스", i + 1)
+        print("\n뉴스", i + 1) # 리스트 인덱스는 0부터 시작이지만 1번부터 표한하기 위함.
         print("제목:", title)
         if summary != "":
             print("요약:", summary)
-        if result["plus"]:
-            print("긍정 키워드:", result["plus"])
-        if result["minus"]:
-            print("부정 키워드:", result["minus"])
-        print("점수:", result["score"])
+        print("점수:", result)
 
-    return total_score
+    return total_score        # 최종 종합 점수를 main 함수로 전달.
 
 
 # 메인 실행
@@ -318,13 +307,12 @@ def main():
     print("                  관심종목 뉴스 분석기")
     print("--------------------------------------------------------")
 
-    ticker = input("\n관심 종목의 티커 입력 (예: AAPL, MSFT, TSLA): ")
-    ticker = ticker.upper().strip()
+    ticker = input("관심 종목의 티커 입력 (예: AAPL, MSFT, TSLA): ")
+    ticker = ticker.upper()        # 사용자가 소문자를 입력해도 가능하게 함.
 
     news_list = find_news(ticker)
 
-    if len(news_list) > 10:
-        news_list = news_list[:10]
+    news_list = news_list[:20]
 
     total_score = print_news(news_list)
 
@@ -335,5 +323,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 ```
