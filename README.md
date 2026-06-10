@@ -250,23 +250,23 @@ def remove_html_tags(text):
 
 
 # 뉴스 제목+요약에서 키워드 탐색 및 점수 계산
-def analyze_news(title, summary):
-    text = title + " " + summary
-    words = text.split()
-    found_plus = []
+def analyze_news(title, summary):                # 함수로 만든 이유 : 뉴스마다 같은 분석을 반복해야 하기 떄문
+    text = title + " " + summary                 # 모든 뉴스에 대해 동일한 로직을 적용해야 하므로 함수로 분리함.
+    words = text.split()                         # title과 summary를 매개변수로 받은 이유:
+    found_plus = []                              # 뉴스마다 제목과 내용이 다르기 때문. 함수로 호출할 때마다 전달하여 재사용 가능.
     found_minus = []
-    score = 0
-
-    for word in words:
-        if word in Plus_Keywords:
-            score = score + Plus_Keywords[word]
+    score = 0                                    # split() 사용 이유 : 문장을 단어 단위로 나누기 위해 사용함. 키워드 탐색을 위해
+                                                 # 리스트 사용 이유 : 발견된 키워드들을 저장하기 위해 사용.       
+    for word in words:                                           # for문 사용 이유 : 모든 단어를 하나씩 검사해야 하기 때문
+        if word in Plus_Keywords:                                # 빠른 키 검색을 위해 딕셔너리 사용함.
+            score = score + Plus_Keywords[word]                  # 제목과 요약을 합친 이유 : 제목에만 중요한 단어가 있을 수 있고 내용에만 있을 수 있음.
             found_plus.append(word)
 
         if word in Minus_Keywords:
             score = score + Minus_Keywords[word]
             found_minus.append(word)
 
-    return {
+    return {                                    # 딕셔너리 반환 이유 : 분석 결과가 여러개이기 때문
         "score": score,
         "plus": found_plus,
         "minus": found_minus,
