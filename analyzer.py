@@ -14,12 +14,12 @@ def analyze_news(title, summary):
 
         word = clean_word(word)
 
-        if word in PLUS_KEYWORDS:
-            score += PLUS_KEYWORDS[word]
+        if word in Plus_Keywords:
+            score += Plus_Keywords[word]
 
-        if word in MINUS_KEYWORDS:
-            score += MINUS_KEYWORDS[word]
-
+        if word in Minus_Keywords:
+            score += Minus_Keywords[word]
+        
     return score
 
 
