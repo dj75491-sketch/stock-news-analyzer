@@ -1,4 +1,4 @@
-from keywords import PLUS_KEYWORDS, MINUS_KEYWORDS
+from keywords import Plus_Keywords, Minus_Keywords
 from utils import clean_word
 
 
