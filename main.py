@@ -1,8 +1,6 @@
 # stock-news-analyzer-code
 
 ## code
----
-```python
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
